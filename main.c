@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #define BUFSIZE 64
-#define TOK_DELIM "\t\r\n\a"
 
 typedef struct line {
     char **tokens;
@@ -12,16 +12,17 @@ typedef struct line {
 
 } line_t;
 
-line_t *split_line(char *line)
+char **split_line(char *line)
 {
     int position = 0;
+    char *sep = "\t\r\n\a";
 
     // Allocate for struct
     line_t *l = (line_t *) malloc(sizeof (line_t));
-    
+
     l->bufsize = BUFSIZE; // Is there a way to do this elsewhere?
 
-    if (l == NULL)        // If malloc fails (returns void *) 
+    if (l == NULL)        // If malloc fails (returns void *)
         return NULL;
 
     // Allocate for tokens
@@ -35,24 +36,24 @@ line_t *split_line(char *line)
     /* Tokenize - the first time we call strtok,
        we expect that the first arg is specified.
        Always include the delimiter. */
-    l->token = strtok(line, TOK_DELIM);
+    l->token = strtok(line, sep);
 
     while (l->token != NULL) {
         l->tokens[position] = l->token;
         position++;
         if (position >= l->bufsize) {
-            /* Double the line's buffer size if the 
+            /* Double the line's buffer size if the
                position exceeds the original buffer size */
             l->bufsize += BUFSIZE;
-        } 
+        }
     }
 
     // Remember to free...
-    
-    return l;
+
+    return l->tokens;
 }
 /* Reads user input */
-char *lsh_read_line(void)
+char *read_line(void)
 {
     char *line = NULL;
     ssize_t bufsize = 0;
@@ -67,10 +68,16 @@ void event_loop(void)
     char **args;
     int status;
 
+    char *name = getlogin();
+
+    if (!name) {
+        fprintf(stderr, "Error getting username\n");
+    }
+
     do {
-        printf("> ");
-        line = lsh_read_line();
-        //args = lsh_split_line(args);
+        printf("> %s: ", name);
+        line = read_line();
+        args = split_line(line); // parsing the commands, of course
 
         free(line);
         free(args);
