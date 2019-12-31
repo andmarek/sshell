@@ -5,11 +5,6 @@
 
 #define BUFSIZE 64
 
-typedef struct line {
-    char **args;
-    char *cmd;
-} line_t;
-
 //char **split_line(char *line)
 char **split_line(char *line)
 {
@@ -22,7 +17,7 @@ char **split_line(char *line)
 
     int token_count = 0;
 
-    tokens = malloc(sizeof (char*) * BUFSIZE);
+    //tokens = malloc(sizeof (char*) * BUFSIZE);
     token = strtok(line, sep);
 
     while(token != NULL) {
@@ -33,8 +28,8 @@ char **split_line(char *line)
         token = strtok(NULL, sep);
     }
 
-    //return tokens;
-    // Remember to free...
+    //tokens[token_count] = "\0";
+
     return tokens;
 
 }
@@ -53,6 +48,7 @@ void event_loop(void)
     char *line;
     char **args;
     int status;
+
 
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
@@ -73,13 +69,13 @@ void event_loop(void)
     do {
         printf("> %s :: %s : ", name, short_version);
         line = read_line();
-        args = split_line(line);
-
+//        args = split_line(line);
+        printf("%s\n", args[0]);
         // Maybe perform opderation?
-        launch(what is arg count, args);
+        //launch(what is arg count, args);
 
-        free(line);
-        free(args);
+        //free(line);
+        //free(args);
 
     } while(status);
 
