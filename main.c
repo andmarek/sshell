@@ -5,52 +5,33 @@
 
 #define BUFSIZE 64
 
-typedef struct line {
-    char **tokens;
-    char *token;
-    int bufsize;
-
-} line_t;
-
+//char **split_line(char *line)
 char **split_line(char *line)
 {
     int position = 0;
+
     char *sep = "\t\r\n\a";
 
-    // Allocate for struct
-    line_t *l = (line_t *) malloc(sizeof (line_t));
+    char **tokens;
+    char *token;
 
-    l->bufsize = BUFSIZE; // Is there a way to do this elsewhere?
+    int token_count = 0;
 
-    if (l == NULL)        // If malloc fails (returns void *)
-        return NULL;
+    tokens = malloc(sizeof (char*) * BUFSIZE);
+    token = strtok(line, sep);
 
-    // Allocate for tokens
-    l->tokens = malloc(BUFSIZE * sizeof(char *));
-
-    // Check for token's malloc
-    if (!l->tokens) {
-        fprintf(stderr, "lsh: allocation error\n");
+    while(token != NULL) {
+        //printf("%s\n", token);
+        // double the size to make sure it's not overflowed
+        tokens[token_count] = token;
+        token_count++;
+        token = strtok(NULL, sep);
     }
 
-    /* Tokenize - the first time we call strtok,
-       we expect that the first arg is specified.
-       Always include the delimiter. */
-    l->token = strtok(line, sep);
-
-    while (l->token != NULL) {
-        l->tokens[position] = l->token;
-        position++;
-        if (position >= l->bufsize) {
-            /* Double the line's buffer size if the
-               position exceeds the original buffer size */
-            l->bufsize += BUFSIZE;
-        }
-    }
-
+    //return tokens;
     // Remember to free...
+    return tokens;
 
-    return l->tokens;
 }
 /* Reads user input */
 char *read_line(void)
@@ -77,7 +58,12 @@ void event_loop(void)
     do {
         printf("> %s: ", name);
         line = read_line();
-        args = split_line(line); // parsing the commands, of course
+        args = split_line(line);
+
+        for (int i = 0; i < 3; i++) {
+            printf("%s", args[i]);
+        }
+
 
         free(line);
         free(args);
