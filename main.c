@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "function.h"
+#include "functions.h"
 
 #define BUFSIZE 64
 
@@ -14,8 +14,6 @@ launch(int , char **);
 //char **split_line(char *line)
 char **split_line(char *line)
 {
-    int position = 0;
-
     char *sep = "\t\r\n\a";
 
     char **tokens;
@@ -112,10 +110,15 @@ int launch(int argc, char **args)
     } else if (pid < 0) {
         perror("fork failed.");
     } else {
-        do {
-            if (strcmp(args[0], "cd")) {
-                cd(args);
+        do { //forking a process to handle user input
+            // Get workers PID
+            wpid = fork();
+
+            if (!(strcmp(args[0], "cd"))) {
+                cd(args); // from functions.h
             }
+            // we need to fork a child process
+
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
