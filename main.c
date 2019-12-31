@@ -111,8 +111,7 @@ int launch(int argc, char **args)
         perror("fork failed.");
     } else {
         do { //forking a process to handle user input
-            // Get workers PID
-            wpid = fork();
+            wpid = waitpid(pid, &status, WUNTRACED);
 
             if (!(strcmp(args[0], "cd"))) {
                 cd(args); // from functions.h
