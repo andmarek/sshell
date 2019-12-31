@@ -3,7 +3,13 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "function.h"
+
 #define BUFSIZE 64
+
+// Function definitions
+int
+launch(int , char **);
 
 //char **split_line(char *line)
 char **split_line(char *line)
@@ -17,7 +23,7 @@ char **split_line(char *line)
 
     int token_count = 0;
 
-    //tokens = malloc(sizeof (char*) * BUFSIZE);
+    tokens = malloc(sizeof (char*) * BUFSIZE);
     token = strtok(line, sep);
 
     while(token != NULL) {
@@ -27,8 +33,8 @@ char **split_line(char *line)
         token_count++;
         token = strtok(NULL, sep);
     }
-
-    //tokens[token_count] = "\0";
+    // Putting a null byte here so we can count the args eventually
+    tokens[token_count] = "\0";
 
     return tokens;
 
@@ -46,9 +52,9 @@ char *read_line(void)
 void event_loop(void)
 {
     char *line;
-    char **args;
+    char **args; // Getting the reference from the tokens we parsed.
     int status;
-
+    int argc = 0;
 
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
@@ -69,13 +75,19 @@ void event_loop(void)
     do {
         printf("> %s :: %s : ", name, short_version);
         line = read_line();
-//        args = split_line(line);
-        printf("%s\n", args[0]);
+        args = split_line(line);
         // Maybe perform opderation?
-        //launch(what is arg count, args);
+        printf(args[0]);
 
-        //free(line);
-        //free(args);
+        while (args[argc] != "\0") {
+            argc++;
+        }
+        printf("%d\n", argc);
+
+        launch(argc, args);
+
+        free(line);
+        free(args);
 
     } while(status);
 
@@ -93,13 +105,17 @@ int launch(int argc, char **args)
         if (execvp(args[0], args) == -1) {
             perror("fork failed");
         }
+
         printf("do something");
+
         exit(EXIT_FAILURE);
     } else if (pid < 0) {
         perror("fork failed.");
     } else {
         do {
-
+            if (strcmp(args[0], "cd")) {
+                cd(args);
+            }
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
