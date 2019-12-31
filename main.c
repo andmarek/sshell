@@ -5,6 +5,11 @@
 
 #define BUFSIZE 64
 
+typedef struct line {
+    char **args;
+    char *cmd;
+} line_t;
+
 //char **split_line(char *line)
 char **split_line(char *line)
 {
@@ -49,6 +54,16 @@ void event_loop(void)
     char **args;
     int status;
 
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+
+    char short_version[20];
+    /* We'll need to find the length of the pwd (cwd variable)
+       and determine where we need to cut this.
+       Maybe tokenize it?.
+       */
+    strncpy(short_version, cwd + 19, 27 - 18);
+
     char *name = getlogin();
 
     if (!name) {
@@ -56,14 +71,12 @@ void event_loop(void)
     }
 
     do {
-        printf("> %s: ", name);
+        printf("> %s :: %s : ", name, short_version);
         line = read_line();
         args = split_line(line);
 
-        for (int i = 0; i < 3; i++) {
-            printf("%s", args[i]);
-        }
-
+        // Maybe perform opderation?
+        launch(what is arg count, args);
 
         free(line);
         free(args);
@@ -90,6 +103,7 @@ int launch(int argc, char **args)
         perror("fork failed.");
     } else {
         do {
+
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
