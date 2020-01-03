@@ -1,3 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+int cd(char **);
+int help(char **);
+int ss_exit(char **);
+
+int num_builtins() {
+    return sizeof(builtin_str) / sizeof(char *);
+}
+
 int
 cd(char **args)
 {
@@ -17,3 +29,10 @@ help(char **args)
     printf("Bruh you ain't need help.");
     return 1;
 }
+
+int
+ss_exit(char **args)
+{
+    return 0;
+}
+

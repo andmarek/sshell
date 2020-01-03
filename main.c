@@ -8,8 +8,14 @@
 #define BUFSIZE 64
 
 // Function definitions
+char *builtin_str[] = {
+    "cd",
+    "help",
+    "exit"
+};
+
 int
-launch(int , char **);
+launch(char **);
 
 //char **split_line(char *line)
 char **split_line(char *line)
@@ -82,7 +88,7 @@ void event_loop(void)
         }
         printf("%d\n", argc);
 
-        launch(argc, args);
+        launch(args);
 
         free(line);
         free(args);
@@ -91,8 +97,25 @@ void event_loop(void)
 
 }
 
+int execute(char **args)
+{
+    int i;
+
+    // If user enters nothing
+    if (args[0] == NULL) {
+        return 1;
+    }
+
+    for (i = 0; i < num_builtins(); i++) {
+        if (strcmp(args[0], builtin_str[i]) == 0) {
+            return (*builtin_func[i])(args);
+        }
+    }
+    return launch(args);
+}
+
 /* Forks the parent process to perform desired task */
-int launch(int argc, char **args)
+int launch(char **args)
 {
     int status;
     pid_t pid, wpid;
@@ -101,18 +124,18 @@ int launch(int argc, char **args)
 
     if (pid == 0) {
         if (execvp(args[0], args) == -1) {
-            perror("fork failed");
+            perror("fork failed jfj");
         }
-
         printf("do something");
-
         exit(EXIT_FAILURE);
     } else if (pid < 0) {
         perror("fork failed.");
     } else {
-        do { //forking a process to handle user input
+        do {
+            //Keeping tabs
             wpid = waitpid(pid, &status, WUNTRACED);
-
+            // If child has already changed state, then
+            // these calls return immediately.
             if (!(strcmp(args[0], "cd"))) {
                 cd(args); // from functions.h
             }
