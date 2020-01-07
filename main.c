@@ -19,7 +19,8 @@ int (*builtin_func[]) (char **) = {
     &ss_cd,
     &ss_help,
     &ss_exit,
-    &ss_pwd
+    &ss_pwd,
+    &ss_clear
 };
 
 int main(int argc, char **argv)

@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int cd(char **);
+//#include "functions.h"
+
+/*int cd(char **);
 int help(char **);
-int ss_exit(char **);
-
-
+int ss_exit(char **);*/
 
 int
 ss_cd(char **args)
@@ -43,4 +43,13 @@ ss_pwd(char **args)
     printf("%s\n", cwd);
     return 1;
 }
+
+int
+ss_clear(char **args)
+{
+    printf("\033[H\033[J");
+    return 1;
+}
+
+
 
