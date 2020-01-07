@@ -6,12 +6,10 @@ int cd(char **);
 int help(char **);
 int ss_exit(char **);
 
-int num_builtins() {
-    return sizeof(builtin_str) / sizeof(char *);
-}
+
 
 int
-cd(char **args)
+ss_cd(char **args)
 {
     if (args[1] == NULL) {
         fprintf(stderr, "expected argument to \"cd\"\n");
@@ -24,7 +22,7 @@ cd(char **args)
 }
 
 int
-help(char **args)
+ss_help(char **args)
 {
     printf("Bruh you ain't need help.");
     return 1;

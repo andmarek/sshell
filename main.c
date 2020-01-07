@@ -8,16 +8,20 @@
 #define BUFSIZE 64
 
 // Function definitions
-char *builtin_str[] = {
-    "cd",
-    "help",
-    "exit"
+
+int (*builtin_func[]) (char **) = {
+    &ss_cd,
+    &ss_help,
+    &ss_exit
 };
+
+int num_builtins() {
+    return sizeof(builtin_str) / sizeof(char *);
+}
 
 int
 launch(char **);
 
-//char **split_line(char *line)
 char **split_line(char *line)
 {
     char *sep = "\t\r\n\a";
@@ -137,7 +141,7 @@ int launch(char **args)
             // If child has already changed state, then
             // these calls return immediately.
             if (!(strcmp(args[0], "cd"))) {
-                cd(args); // from functions.h
+                ss_cd(args); // from functions.h
             }
             // we need to fork a child process
 
