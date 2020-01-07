@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <dirent.h>
 #include <unistd.h>
 
-//#include "functions.h"
-
-/*int cd(char **);
-int help(char **);
-int ss_exit(char **);*/
+/* Macros */
+#define clear() printf("\033[H\033[J")
 
 int
 ss_cd(char **args)
@@ -35,6 +34,33 @@ ss_exit(char **args)
 }
 
 int
+ss_ls(char **args)
+{
+    DIR *dirp;
+    struct dirent *direntp;
+
+    /* Ugly hack, but we can get a const char * of the directory
+     * to open.  I'm sure there's a better solution. */
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+
+    dirp = opendir(cwd); // DIR *opendir (const char *dirname)
+
+    if (dirp == NULL) {
+        perror("problem");
+    } else {
+        for (;;) {
+            direntp = readdir(dirp);
+            if (direntp == NULL) break;
+            printf("%s\n", direntp->d_name);
+        }
+        closedir(dirp);
+    }
+
+    return 1;
+}
+
+int
 ss_pwd(char **args)
 {
     char cwd[1024];
@@ -47,7 +73,7 @@ ss_pwd(char **args)
 int
 ss_clear(char **args)
 {
-    printf("\033[H\033[J");
+    clear();
     return 1;
 }
 
