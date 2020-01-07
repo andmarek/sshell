@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
 #include "functions.h"
 
 #define BUFSIZE 64
 
-// Function definitions
+/* Function prototypes */
+int execute(char **args);
+int launch(char **);
+int num_builtins();
+char **split_line(char *line);
+char *read_line(void);
+void event_loop(void);
 
 int (*builtin_func[]) (char **) = {
     &ss_cd,
@@ -15,12 +20,16 @@ int (*builtin_func[]) (char **) = {
     &ss_exit
 };
 
+int main(int argc, char **argv)
+{
+    event_loop();
+    return EXIT_SUCCESS;
+}
+
 int num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
 }
 
-int
-launch(char **);
 
 char **split_line(char *line)
 {
@@ -84,15 +93,7 @@ void event_loop(void)
         printf("> %s :: %s : ", name, short_version);
         line = read_line();
         args = split_line(line);
-        // Maybe perform opderation?
-        printf(args[0]);
-
-        while (args[argc] != "\0") {
-            argc++;
-        }
-        printf("%d\n", argc);
-
-        launch(args);
+        status = execute(args);
 
         free(line);
         free(args);
@@ -127,32 +128,22 @@ int launch(char **args)
     pid = fork();
 
     if (pid == 0) {
+        //Exec encounters an error
         if (execvp(args[0], args) == -1) {
-            perror("fork failed jfj");
+            perror("fork failed jfj\n");
         }
-        printf("do something");
+        printf("do something\n");
         exit(EXIT_FAILURE);
     } else if (pid < 0) {
         perror("fork failed.");
     } else {
+        // Parent process apparently.
         do {
             //Keeping tabs
             wpid = waitpid(pid, &status, WUNTRACED);
-            // If child has already changed state, then
-            // these calls return immediately.
-            if (!(strcmp(args[0], "cd"))) {
-                ss_cd(args); // from functions.h
-            }
-            // we need to fork a child process
-
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
-
     return 1;
+}
 
-}
-int main(int argc, char **argv)
-{
-    event_loop();
-    return EXIT_SUCCESS;
-}
+

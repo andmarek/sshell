@@ -1,7 +1,14 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
-int cd(char **);
-int help(char **);
+int ss_exit(char **);
+int ss_cd(char **);
+int ss_help(char **);
+
+char *builtin_str[] = {
+    "cd",
+    "help",
+    "exit"
+};
 
 #endif
