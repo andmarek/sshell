@@ -34,3 +34,13 @@ ss_exit(char **args)
     return 0;
 }
 
+int
+ss_pwd(char **args)
+{
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+
+    printf("%s\n", cwd);
+    return 1;
+}
+

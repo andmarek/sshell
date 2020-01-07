@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include "functions.h"
 
 #define BUFSIZE 64
@@ -17,7 +18,8 @@ void event_loop(void);
 int (*builtin_func[]) (char **) = {
     &ss_cd,
     &ss_help,
-    &ss_exit
+    &ss_exit,
+    &ss_pwd
 };
 
 int main(int argc, char **argv)
@@ -145,5 +147,4 @@ int launch(char **args)
     }
     return 1;
 }
-
 
