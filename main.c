@@ -148,6 +148,9 @@ launch(char **args)
         perror("fork failed.");
     } else {
         do {
+            // Wait on the child process 
+            // fork -> parent waits on child, child -> exec -> exit -> wait ->
+            // resume parent
             wpid = waitpid(pid, &status, WUNTRACED);
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
