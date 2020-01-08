@@ -24,18 +24,20 @@ int (*builtin_func[]) (char **) = {
     &ss_ls
 };
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
     event_loop();
     return EXIT_SUCCESS;
 }
 
-int num_builtins() {
+int
+num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
 }
 
-
-char **split_line(char *line)
+char **
+split_line(char *line)
 {
     char *sep = "\t\r\n\a";
 
@@ -61,7 +63,8 @@ char **split_line(char *line)
 
 }
 /* Reads user input */
-char *read_line(void)
+char *
+read_line(void)
 {
     char *line = NULL;
     ssize_t bufsize = 0;
@@ -70,7 +73,8 @@ char *read_line(void)
 }
 
 /* Main loop for parsing input and delegating duties */
-void event_loop(void)
+void
+event_loop(void)
 {
     char *line;
     char **args; // Getting the reference from the tokens we parsed.
@@ -106,11 +110,11 @@ void event_loop(void)
 
 }
 
-int execute(char **args)
+int
+execute(char **args)
 {
     int i;
 
-    // If user enters nothing
     if (args[0] == NULL) {
         return 1;
     }
@@ -124,7 +128,8 @@ int execute(char **args)
 }
 
 /* Forks the parent process to perform desired task */
-int launch(char **args)
+int
+launch(char **args)
 {
     int status;
     pid_t pid, wpid;
@@ -142,9 +147,7 @@ int launch(char **args)
     } else if (pid < 0) {
         perror("fork failed.");
     } else {
-        // Parent process apparently.
         do {
-            //Keeping tabs
             wpid = waitpid(pid, &status, WUNTRACED);
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
