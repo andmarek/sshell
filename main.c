@@ -135,6 +135,7 @@ int launch(char **args)
         //Exec encounters an error
         if (execvp(args[0], args) == -1) {
             perror("fork failed jfj\n");
+            fprintf(stderr, "an error occurred in execvp\n");
         }
         printf("do something\n");
         exit(EXIT_FAILURE);
