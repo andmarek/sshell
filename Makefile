@@ -22,6 +22,7 @@ $(BIN): $(OBJS)
 
 .PHONY: all clean
 
-clean: @$(RM) *.o $(BIN) *.d core vgcore.* gmon.out
+clean:
+	@$(RM) *.o $(BIN) *.d core vgcore.* gmon.out
 
 clobber: clean
