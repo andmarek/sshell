@@ -21,6 +21,7 @@ ss_cd(char **args)
         if (chdir(args[1]) != 0) {
             perror("problem");
         }
+        printf("Hey this should have changed the dir");
     }
     return 1;
 }

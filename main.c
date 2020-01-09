@@ -15,6 +15,11 @@ char **split_line(char *line);
 char *read_line(void);
 void event_loop(void);
 
+typedef struct line {
+    char **cmd1;
+
+} line_t;
+
 int (*builtin_func[]) (char **) = {
     &ss_cd,
     &ss_help,
@@ -34,6 +39,31 @@ main(int argc, char **argv)
 int
 num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
+}
+j
+
+/* Used to pass output to file or stream */
+int handle_redirection(char **args)
+{
+    FILE *f;
+    char  output_redir = '>'; /* Output redirection */ 
+    char  input_redir = '<'; /* Input redirection */ 
+
+    return 1;
+}
+/* Used to pass output to another program */
+int handle_pipe(char **args)
+{
+    char pipe = '|';
+    int i;
+    for (i = 0; args[i]; i++) {
+        if (args[i] == pipe) {
+            // Perform some sort of process 
+            output = output_from_command(); 
+            //input it into another process 
+        }
+    }
+    return 1;
 }
 
 char **
@@ -153,6 +183,8 @@ launch(char **args)
             // resume parent
             wpid = waitpid(pid, &status, WUNTRACED);
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
+        // WIFEXITED = termined with exit
+        // WIFSIGNALED = signal not handled
     }
     return 1;
 }
