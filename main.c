@@ -40,19 +40,34 @@ int
 num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
 }
-j
 
 /* Used to pass output to file or stream */
-int handle_redirection(char **args)
+int
+handle_redirection(char **args, int target_index)
 {
     FILE *f;
+    int i;
     char  output_redir = '>'; /* Output redirection */ 
     char  input_redir = '<'; /* Input redirection */ 
+    
+    for(i = 0; args[i]; i++) {
+        if (args)
+    }
+
+    char *output_buf[1024]; // What size should we use for this ? 
+
+    char *filename = args[target_index];
+
+    fopen(filename, "w+");
+
+    fseek(f, 
+    fwrite();
 
     return 1;
 }
 /* Used to pass output to another program */
-int handle_pipe(char **args)
+int
+handle_pipe(char **args)
 {
     char pipe = '|';
     int i;
