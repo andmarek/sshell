@@ -14,7 +14,7 @@ char *builtin_str[] = {
     "exit",
     "pwd",
     "clear",
-    "ls"
+    "ls",
 };
 
 #endif

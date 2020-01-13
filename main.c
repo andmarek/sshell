@@ -13,18 +13,53 @@ int launch(char **);
 int num_builtins();
 char **split_line(char *line);
 char *read_line(void);
-void event_loop(void);
+void event_loop();
+void usage(char *);
 
-void usage(char *name)
+int
+main(int argc, char **argv)
 {
-fprintf(stderr,
-          "Usage: %s [-p|--prompt <promt_string>] \n",
-          name);
+    char *prompt;
+    uint32_t i, j;
+    uint32_t long_arg = 0;
 
-  exit(-1);
+    // Optional arguments, of course
+    if (argc > 1) {
+        for(i = 1, long_arg = 0; i < argc; i++, long_arg = 0) {
+            if (argv[i][0] == '-') {
+                if (argv[i][1] == '-') {
+                    argv[i]++;
+                    long_arg = 1;
+                }
+                // Switch for different flags
+                switch (argv[i][1]) {
+                    case 'p':
+                        // parse the prompt
+                        prompt = argv[2]; // is this bad?
+                        printf("arg[2]: %s", argv[2]);
+                        printf("Shell initialized with prompt: %s", prompt);
+                    break;
+                }
+            }
+        }
+    }
+
+    event_loop(prompt);
+    return EXIT_SUCCESS;
 }
 
-int (*builtin_func[]) (char **) = {
+void
+usage(char *name)
+{
+    fprintf(stderr,
+            "Usage: %s [-p|--prompt <promt_string>] \n",
+            name);
+
+    exit(-1);
+}
+
+int
+(*builtin_func[]) (char **) = {
     &ss_cd,
     &ss_help,
     &ss_exit,
@@ -33,28 +68,6 @@ int (*builtin_func[]) (char **) = {
     &ss_ls
 
 };
-
-int
-main(int argc, char **argv)
-{
-    uint32_t long_arg = 0;
-
-    if (argc > 1) {
-        if (argv[i][0] == '-') {
-            if (argv[i][1] == '-') {
-                argv[i]++;
-                long_arg = 1;
-            }
-            switch (argv[i][1]) {
-                switch 'p':
-                    break;
-            }
-        }
-    }
-
-    event_loop();
-    return EXIT_SUCCESS;
-}
 
 int
 num_builtins() {
@@ -87,6 +100,7 @@ split_line(char *line)
     return tokens;
 
 }
+
 /* Reads user input */
 char *
 read_line(void)
@@ -99,24 +113,29 @@ read_line(void)
 
 /* Main loop for parsing input and delegating duties */
 void
-event_loop(void)
+event_loop(char *prompt)
 {
     char *line;
     char **args; // Getting the reference from the tokens we parsed.
     int status;
     int argc = 0;
-
+    char *name;
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
 
     char short_version[20];
+
     /* We'll need to find the length of the pwd (cwd variable)
        and determine where we need to cut this.
        Maybe tokenize it?.
        */
     strncpy(short_version, cwd + 19, 27 - 18);
 
-    char *name = getlogin();
+    if (prompt != NULL) {
+        name = prompt;
+    } else {
+        name = getlogin();
+    }
 
     if (!name) {
         fprintf(stderr, "Error getting username\n");
