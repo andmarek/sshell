@@ -15,6 +15,15 @@ char **split_line(char *line);
 char *read_line(void);
 void event_loop(void);
 
+void usage(char *name)
+{
+fprintf(stderr,
+          "Usage: %s [-p|--prompt <promt_string>] \n",
+          name);
+
+  exit(-1);
+}
+
 int (*builtin_func[]) (char **) = {
     &ss_cd,
     &ss_help,
@@ -22,11 +31,27 @@ int (*builtin_func[]) (char **) = {
     &ss_pwd,
     &ss_clear,
     &ss_ls
+
 };
 
 int
 main(int argc, char **argv)
 {
+    uint32_t long_arg = 0;
+
+    if (argc > 1) {
+        if (argv[i][0] == '-') {
+            if (argv[i][1] == '-') {
+                argv[i]++;
+                long_arg = 1;
+            }
+            switch (argv[i][1]) {
+                switch 'p':
+                    break;
+            }
+        }
+    }
+
     event_loop();
     return EXIT_SUCCESS;
 }
@@ -113,6 +138,7 @@ event_loop(void)
 int
 execute(char **args)
 {
+    printf("Execute gets called");
     int i;
 
     if (args[0] == NULL) {
@@ -139,7 +165,7 @@ launch(char **args)
     if (pid == 0) {
         //Exec encounters an error
         if (execvp(args[0], args) == -1) {
-            perror("fork failed jfj\n");
+            perror("fork failed\n");
             fprintf(stderr, "an error occurred in execvp\n");
         }
         printf("do something\n");
