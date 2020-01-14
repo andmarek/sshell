@@ -13,6 +13,13 @@
 #define clear() printf("\033[H\033[J")
 
 int
+ss_ps(char **args)
+{
+
+    return 1;
+}
+
+int
 ss_cd(char **args)
 {
     if (args[1] == NULL) {

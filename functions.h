@@ -7,6 +7,7 @@ int     ss_help(char **);
 int     ss_pwd(char **);
 int     ss_clear(char **);
 int     ss_ls(char **);
+int     ss_ps(char **);
 
 char *builtin_str[] = {
     "cd",
@@ -15,6 +16,12 @@ char *builtin_str[] = {
     "pwd",
     "clear",
     "ls",
+    "pid",
+    "ppid
+
 };
 
+char *non_builtin_str[] = {
+    "ps"
+}:
 #endif
