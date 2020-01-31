@@ -1,4 +1,4 @@
-#include <dirent.h>
+#include <dirent.h> // for ps, internal format of directories -- directory streams
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -12,10 +12,33 @@
 /* Macros */
 #define clear() printf("\033[H\033[J")
 
+// Reports process status for particular user
+// Spawn ps and parse the output
 int
-ss_ps(char **args)
+ss_ps(int argc, char **argv)
 {
+    // check ps.c
+    /* Define the directory stream */
+    DIR *dirp = opendir("/proc");
+    struct dirent *de;
+    int i, fd_self, fd;
+    struct prpsinfo pinfo; //process info
+    int fdproc; // file descriptor process
 
+    unsigned long time, stime;
+    char flag, *tty;
+
+    if ((dirp = opendir("/proc")) == (DIR *) NULL) {
+        perror("/proc");
+        exit(1);
+    }
+
+    while(dirent = readddir(dirp)) {
+        if (dirent->d_name[0] != ".") {
+            strcpy();
+            strcat();
+        }
+    }
     return 1;
 }
 
@@ -25,7 +48,8 @@ ss_cd(char **args)
     if (args[1] == NULL) {
         fprintf(stderr, "expected argument to \"cd\"\n");
     } else {
-        if (chdir(args[1]) != 0) {
+        if (chdir(args[1]-1) != 0) {
+            printf("args[1]: %s\n", args[1]);
             perror("problem");
         }
     }
@@ -46,7 +70,7 @@ ss_exit(char **args)
 }
 
 int
-ss_ls(char **args)
+ss_ls(char **args) /* Need to announce pid */
 {
     DIR *dirhandle = opendir(".");
 
