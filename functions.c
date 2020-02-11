@@ -13,7 +13,6 @@
 /* Macros */
 #define clear() printf("\033[H\033[J")
 
-
 int
 ss_ppid(char **argv)
 {
@@ -25,35 +24,6 @@ int
 ss_pid(char **argv)
 {
     return 1;
-}
-
-int
-ss_cd(char **argv)
-{
-    /*
-    char c[100];
-
-    int ret;
-    ret = chdir("/tmp");
-    getcwd(c, sizeof(c));
-    printf("ret, cwd: %d, %s\n", ret, c);
-    */
-    char c[100];
-
-    if (argv[1] == NULL) {
-        fprintf(stderr, "expected argument to \"cd\": cd <dir>\n");
-    } else {
-        if (chdir(argv[1]) != 0) { //error
-            printf("argv[1]: %s\n", argv[1]);
-            getcwd(c, sizeof(c) );
-            return 0;
-        } else { // Probably not error
-            getcwd(c, sizeof(c) );
-            printf("wowza");
-            return 1;
-        }
-        printf("Post exeuction: %s ", argv[1]);
-    }
 }
 
 int

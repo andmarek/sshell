@@ -1,7 +1,11 @@
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include <unistd.h>
 
 #include "functions.h"
@@ -66,7 +70,7 @@ usage(char *name)
 
 int
 (*builtin_func[]) (char **) = {
-    &ss_cd,
+    //&ss_cd,
     &ss_help,
     &ss_exit,
     &ss_pwd,
@@ -84,7 +88,7 @@ num_builtins() {
 char **
 split_line(char *line)
 {
-    char *sep = "\t\r\n\a";
+    char *sep = " \t\r\n\a";
 
     char **tokens;
     char *token;
@@ -124,6 +128,14 @@ read_line(void)
  * called, which gets and returns the line as a char *.  This gets passed to
  * char **split_line() which tokenizes the line into consumable C-strings.
  * Finally, execute() gets called.  */
+ 
+int ss_cd_short(char *path)
+{
+    printf("cd from cd short\n");
+
+    return chdir(path);
+}
+
 void
 event_loop(char *prompt)
 {
@@ -160,6 +172,17 @@ event_loop(char *prompt)
         printf("> %s :: %s : ", name, short_version);
         line = read_line();
         args = split_line(line);
+        printf("args[0]: %s \n", args[0]);
+
+        /* Will the elusive CD work ? */
+        if (strcmp(args[0], "cd") == 0) {
+            printf("yo dog");
+            if (ss_cd_short(args[1]) < 0) {
+                perror(args[0]);
+            }
+            continue;
+        }
+        printf("We bypassed the builtin cd\n");
         status = execute(args);
 
         free(line);
@@ -196,11 +219,10 @@ launch(char **args)
     pid = fork();
 
     if (pid == 0) { // Child process
-        if (execvp(args[0], args) == -1) {
-            fprintf(stderr, "Error in execution: %s\n", strerror(errno));
+        if (execvp(args[0], args) < 0) {
+            perror(args[0]);
             exit(EXIT_FAILURE);
         }
-        printf("args[0]: %s", args[0]);
     } else if (pid > 0) { // Parent process
         do {
             printf("pid: %d\n", wpid);
