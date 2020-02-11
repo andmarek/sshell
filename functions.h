@@ -7,21 +7,18 @@ int     ss_help(char **);
 int     ss_pwd(char **);
 int     ss_clear(char **);
 int     ss_ls(char **);
-int     ss_ps(char **);
+int     ss_pid(char **);
+int     ss_ppid(char **);
 
 char *builtin_str[] = {
-    "cd",
+    "cd", // required
     "help",
-    "exit",
-    "pwd",
+    "exit", // required
+    "pwd", // required
     "clear",
     "ls",
-    "pid",
-    "ppid
-
+    "pid", // required
+    "ppid", // required
 };
 
-char *non_builtin_str[] = {
-    "ps"
-}:
 #endif

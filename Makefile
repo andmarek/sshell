@@ -5,10 +5,11 @@ CFLAGS = -Wall
 
 ECHO = echo
 
-BIN = sshell
+BIN = shell
 OBJS = functions.o main.o
 
 all: $(BIN)
+
 
 $(BIN): $(OBJS)
 		@$(ECHO) Linking $@

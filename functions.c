@@ -1,9 +1,10 @@
-#include <dirent.h> // for ps, internal format of directories -- directory streams
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <unistd.h>
 
 #define ANSI_COLOR_RED      "\x1b[31m"
@@ -12,73 +13,73 @@
 /* Macros */
 #define clear() printf("\033[H\033[J")
 
-// Reports process status for particular user
-// Spawn ps and parse the output
+
 int
-ss_ps(int argc, char **argv)
+ss_ppid(char **argv)
 {
-    // check ps.c
-    /* Define the directory stream */
-    DIR *dirp = opendir("/proc");
-    struct dirent *de;
-    int i, fd_self, fd;
-    struct prpsinfo pinfo; //process info
-    int fdproc; // file descriptor process
 
-    unsigned long time, stime;
-    char flag, *tty;
-
-    if ((dirp = opendir("/proc")) == (DIR *) NULL) {
-        perror("/proc");
-        exit(1);
-    }
-
-    while(dirent = readddir(dirp)) {
-        if (dirent->d_name[0] != ".") {
-            strcpy();
-            strcat();
-        }
-    }
     return 1;
 }
 
 int
-ss_cd(char **args)
+ss_pid(char **argv)
 {
-    if (args[1] == NULL) {
-        fprintf(stderr, "expected argument to \"cd\"\n");
+    return 1;
+}
+
+int
+ss_cd(char **argv)
+{
+    /*
+    char c[100];
+
+    int ret;
+    ret = chdir("/tmp");
+    getcwd(c, sizeof(c));
+    printf("ret, cwd: %d, %s\n", ret, c);
+    */
+    char c[100];
+
+    if (argv[1] == NULL) {
+        fprintf(stderr, "expected argument to \"cd\": cd <dir>\n");
     } else {
-        if (chdir(args[1]-1) != 0) {
-            printf("args[1]: %s\n", args[1]);
-            perror("problem");
+        if (chdir(argv[1]) != 0) { //error
+            printf("argv[1]: %s\n", argv[1]);
+            getcwd(c, sizeof(c) );
+            return 0;
+        } else { // Probably not error
+            getcwd(c, sizeof(c) );
+            printf("wowza");
+            return 1;
         }
+        printf("Post exeuction: %s ", argv[1]);
     }
-    return 1;
 }
 
 int
-ss_help(char **args)
+ss_help(char **argv)
 {
-    printf("Bruh you ain't need help.");
+    printf("Bruh you ain't need no help.");
     return 1;
 }
 
 int
-ss_exit(char **args)
+ss_exit(char **argv)
 {
     return 0;
 }
 
 int
-ss_ls(char **args) /* Need to announce pid */
+ss_ls(char **argv)
 {
     DIR *dirhandle = opendir(".");
 
-    if (dirhandle == NULL) {
+    if (!dirhandle) {
         fprintf(stderr, "issues.");
     }
 
     struct dirent *de;
+
     while (de = readdir(dirhandle)) {
         _Bool is_dir;
 #ifdef _DIRECT_HAVE_D_TYPE
@@ -104,7 +105,7 @@ ss_ls(char **args) /* Need to announce pid */
 }
 
 int
-ss_pwd(char **args)
+ss_pwd(char **argv)
 {
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
@@ -118,7 +119,7 @@ ss_pwd(char **args)
 }
 
 int
-ss_clear(char **args)
+ss_clear(char **argv)
 {
     clear();
     return 1;
