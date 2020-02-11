@@ -132,8 +132,10 @@ read_line(void)
 int ss_cd_short(char *path)
 {
     printf("cd from cd short\n");
+    if ((chdir(path) < 0)) {
+      perror(path);
 
-    return chdir(path);
+    }
 }
 
 void
