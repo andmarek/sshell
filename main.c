@@ -131,7 +131,13 @@ read_line(void)
  
 int ss_cd_short(char *path)
 {
-    printf("cd from cd short\n");
+    char *home_dir = getenv("HOME");
+
+
+    if (path == NULL) {
+        ss_cd_short(home_dir);
+    } 
+
     if ((chdir(path) < 0)) {
       perror(path);
 
