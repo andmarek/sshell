@@ -6,7 +6,7 @@ CFLAGS = -Wall
 ECHO = echo
 
 BIN = shell
-OBJS = functions.o main.o
+OBJS = functions.o main.o colors.o
 
 all: $(BIN)
 

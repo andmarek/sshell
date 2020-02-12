@@ -16,7 +16,6 @@
 int
 ss_ppid(char **argv)
 {
-
     return 1;
 }
 

@@ -8,9 +8,14 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include "colors.h"
 #include "functions.h"
 
 #define BUFSIZE 64
+
+#define ANSI_COLOR_RED      "\x1b[31m"
+#define ANSI_COLOR_GREEN     "\x1b[32m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
 
 int execute(char **args);
 int launch(char **);
@@ -40,8 +45,8 @@ main(int argc, char **argv)
                 switch (argv[i][1]) {
                     case 'p':
                         prompt = argv[2];
-                        printf("arg[2]: %s", argv[2]);
-                        printf("Shell initialized with prompt: %s", prompt);
+                        printf("arg[2]: %s\n", argv[2]);
+                        printf("Shell initialized with prompt: %s\n", prompt);
                     break;
                     case 'h':
                         usage("SSHELL");
@@ -67,6 +72,12 @@ usage(char *name)
 
     exit(-1);
 }
+
+void
+(*colors_func[]) (void) = {
+    &red,
+    &yellow,
+};
 
 int
 (*builtin_func[]) (char **) = {
@@ -156,20 +167,9 @@ event_loop(char *prompt)
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
 
-    char short_version[20];
-
-    /* NEEDS FIXING:
-        We'll need to find the length of the pwd (cwd variable)
-        and determine where we need to cut this.
-        Maybe tokenize it?.
-    */
-    strncpy(short_version, cwd + 19, 27 - 18);
-
-    if (!prompt) {
-        name = prompt;
-        printf("name: %s", name);
-    } else {
-        name = getlogin();
+    if (!prompt) { /* Should check if prompt is null. */
+        printf("Not prompt\n");
+        prompt = "308sh";
     }
 
     if (!name) {
@@ -177,20 +177,31 @@ event_loop(char *prompt)
     }
 
     do {
-        printf("> %s :: %s : ", name, short_version);
+        
+       /* for (int i = 0; i < 2; i++) {
+            
+            return (*colors_func[i])();
+
+        }*/
+        
+        printf(ANSI_COLOR_GREEN);
+        printf("%s > ", prompt);
+        printf(ANSI_COLOR_RESET);
+
         line = read_line();
         args = split_line(line);
-        printf("args[0]: %s \n", args[0]);
 
-        /* Will the elusive CD work ? */
+        /* Some builtins */
         if (strcmp(args[0], "cd") == 0) {
-            printf("yo dog");
             if (ss_cd_short(args[1]) < 0) {
                 perror(args[0]);
             }
             continue;
-        }
-        printf("We bypassed the builtin cd\n");
+        } /*else if (strcmp(args[0], "ppid") == 0) {
+            ss_ppid(pid) {
+
+            }*/
+
         status = execute(args);
 
         free(line);
