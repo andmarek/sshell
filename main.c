@@ -281,10 +281,15 @@ launch(char **argv, int background)
             exit(EXIT_FAILURE);
         }
     } else if (pid > 0) { // Parent process
+        if (background) {
+            //waitpid(pid, NULL, 0);
+            setpgid(0, 0);
+        } else {
         do {
             printf("pid: %d\n", wpid);
             wpid = waitpid(pid, &status, WUNTRACED);
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
+        }
     } else {
         perror("Fork failed: pid < 0\n");
     }
