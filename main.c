@@ -44,7 +44,8 @@ main(int argc, char **argv)
                 switch (argv[i][1]) {
                     case 'p':
                         //prompt = argv[2]; /* Sets the prompt */
-                        strcpy(prompt, argv[2]);
+                        prompt = argv[2];
+                        //strcpy(prompt, argv[2]);
                         printf("arg[2]: %s\n", argv[2]);
                         printf("Shell initialized with prompt: %s\n", prompt);
                     break;
@@ -78,7 +79,7 @@ void
     &red,
     &yellow,
 };
-
+/*
 int
 (*builtin_func[]) (char **) = {
     //&ss_cd,
@@ -87,7 +88,7 @@ int
     &ss_pwd,
     &ss_clear,
     &ss_ls //    &ss_ps
-};
+};*/
 
 /* returns the number of the builtin functions as an integer */
 int
@@ -100,8 +101,8 @@ int
 parse_ampersand(char **argv)
 {
    int i;
+   i = 0;
    while(argv[i] != NULL && argv[i][0] != '\0') { /* Make sure we check for NULL */
-       printf("woah %c end\n", argv[i][0]);
        if (argv[i][0] == '&') {
            printf("Ampersand in while loop\n");
            //free(argv[i]);
@@ -184,22 +185,16 @@ event_loop(char *prompt)
     //char cwd[1024];
     //getcwd(cwd, sizeof(cwd));
 
-    if (prompt[0] == '\0') { /* Should check if prompt is null. */
-        strcpy(prompt, "308sh");
+    if (prompt == NULL) { 
+        prompt = "308sh";
     }
 
-    //prompt = "308sh";
 
     if (!name) {
         fprintf(stderr, "Error getting username\n");
     }
 
     do {
-       /* let's do somet colors eventually
-          for (int i = 0; i < 2; i++) {
-            return (*colors_func[i])();
-        }*/
-
         printf(ANSI_COLOR_GREEN);
         printf("%s > ", prompt);
         printf(ANSI_COLOR_RESET);
@@ -224,15 +219,39 @@ event_loop(char *prompt)
             continue;
         }
 
+        if (strcmp(argv[0], "exit") == 0) {
+              ss_exit();
+            continue;
+        }
+
+        if (strcmp(argv[0], "pwd") == 0) {
+             ss_pwd(argv); 
+            continue;
+        }
+
+        if (strcmp(argv[0], "pid") == 0) {
+              ss_pid(argv); 
+            continue;
+        }
+        if (strcmp(argv[0], "ppid") == 0) {
+              ss_ppid(argv); 
+            continue;
+        }
+
+        
+
+
         /* Check the rest of builtins */
+        /*
         int i;
 
         for (i = 0; i < num_builtins(); i++) {
             if (strcmp( argv[0], builtin_str[i] ) == 0) {
-                //return
                 status = (*builtin_func[i])(argv);
             }
-        }
+        }*/
+
+        launch(argv, background);
 
 //        status = execute(argv);
 
@@ -242,16 +261,6 @@ event_loop(char *prompt)
 
 }
 
-/* Execute through a list of strings to see if we can call a respective function
- * pointer to a built-in function */
-int
-execute(char **argv)
-{
-    int i;
-
-
-
-}
 
 /* Forks the parent process to perform desired task.  If the pid of fork() returns
  * 1, we replace the process image with some program that the user has entered.
@@ -279,10 +288,10 @@ launch(char **argv, int background)
     } else {
         perror("Fork failed: pid < 0\n");
     }
-
+/*
     if (background) {
         waitpid(pid, &status, 0);
-    }
+    }*/
 
     return 1;
 }

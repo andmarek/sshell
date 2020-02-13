@@ -1,7 +1,7 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-int     ss_exit(char **);
+int     ss_exit(void);
 //int     ss_cd(char **);
 int     ss_help(char **);
 int     ss_pwd(char **);
@@ -13,7 +13,7 @@ int     ss_ppid(char **);
 char *builtin_str[] = {
    // "cd", // required
     "help",
-    "exit", // required
+    //"exit", // required
     "pwd", // required
     "clear",
     "ls",

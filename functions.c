@@ -14,26 +14,30 @@
 #define clear() printf("\033[H\033[J")
 
 int
-ss_ppid(char **argv)
+ss_ppid(void)
 {
+    pid_t ppid = getppid();
+    printf("The ppid is: %d\n", ppid);
     return 1;
 }
 
 int
-ss_pid(char **argv)
+ss_pid(void)
 {
+    pid_t pid = getpid();
+    printf("The pid is: %d\n", pid);
     return 1;
 }
 
 int
 ss_help(char **argv)
 {
-    printf("Bruh you ain't need no help.");
+    printf("Bruh you ain't need no help.\n");
     return 1;
 }
 
 int
-ss_exit(char **argv)
+ss_exit()
 {
     return 0;
 }

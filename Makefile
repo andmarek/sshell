@@ -1,7 +1,7 @@
 CC = gcc
 RM = rm -f
 
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 
 ECHO = echo
 
