@@ -14,6 +14,22 @@
 #define clear() printf("\033[H\033[J")
 
 int
+ss_cd(char *path)
+{
+    char *home_dir = getenv("HOME");
+
+
+    if (path == NULL) {
+        ss_cd(home_dir);
+    }
+
+    if ((chdir(path) < 0)) {
+      perror(path);
+
+    }
+}
+
+int
 ss_ppid(void)
 {
     pid_t ppid = getppid();

@@ -37,10 +37,12 @@ main(int argc, char **argv)
     if (argc > 1) {
         for(i = 1, long_arg = 0; i < argc; i++, long_arg = 0) {
             if (argv[i][0] == '-') {
+
                 if (argv[i][1] == '-') {
                     argv[i]++;
                     long_arg = 1;
                 }
+
                 switch (argv[i][1]) {
                     case 'p':
                         //prompt = argv[2]; /* Sets the prompt */
@@ -70,30 +72,7 @@ usage(char *name)
     fprintf(stderr,
             "Usage: %s [-p|--prompt <promt_string>] \n",
             name);
-
     exit(-1);
-}
-
-void
-(*colors_func[]) (void) = {
-    &red,
-    &yellow,
-};
-/*
-int
-(*builtin_func[]) (char **) = {
-    //&ss_cd,
-    &ss_help,
-    &ss_exit,
-    &ss_pwd,
-    &ss_clear,
-    &ss_ls //    &ss_ps
-};*/
-
-/* returns the number of the builtin functions as an integer */
-int
-num_builtins() {
-    return sizeof(builtin_str) / sizeof(char *);
 }
 
 /* Checks to see if we are running this as a background process */
@@ -105,14 +84,15 @@ parse_ampersand(char **argv)
    while(argv[i] != NULL && argv[i][0] != '\0') { /* Make sure we check for NULL */
        if (argv[i][0] == '&') {
            printf("Ampersand in while loop\n");
-           //free(argv[i]);
-           //argv[i] = NULL;
+           argv[i] = NULL;
+           free(argv[i]);
            return 1;
        }
        i++;
    }
    return 0;
 }
+
 /* Takes a line and splits it into consumable tokens */
 char **
 split_line(char *line)
@@ -146,8 +126,6 @@ read_line(void)
     char *line = NULL;
     ssize_t bufsize = 0;
     getline(&line, &bufsize, stdin);
-    //printf("%s ff\n", line);
-    //return line-1;
     return line;
 }
 
@@ -157,20 +135,6 @@ read_line(void)
  * char **split_line() which tokenizes the line into consumable C-strings.
  * Finally, execute() gets called.  */
 
-int ss_cd_short(char *path)
-{
-    char *home_dir = getenv("HOME");
-
-
-    if (path == NULL) {
-        ss_cd_short(home_dir);
-    }
-
-    if ((chdir(path) < 0)) {
-      perror(path);
-
-    }
-}
 
 void
 event_loop(char *prompt)
@@ -208,52 +172,39 @@ event_loop(char *prompt)
             printf("found a dirty ampersand\n");
         }
 
-        /* Some builtins */
+        /* Some builtins, this feels like Go */
         if (!argv) {
             continue;
         }
+
         if (strcmp(argv[0], "cd") == 0) {
-            if (ss_cd_short(argv[1]) < 0) {
+            if (ss_cd(argv[1]) < 0) {
                 perror(argv[0]);
             }
             continue;
         }
 
         if (strcmp(argv[0], "exit") == 0) {
-              ss_exit();
+              status = ss_exit();
             continue;
         }
 
         if (strcmp(argv[0], "pwd") == 0) {
-             ss_pwd(argv); 
+             status = ss_pwd(argv); 
             continue;
         }
 
         if (strcmp(argv[0], "pid") == 0) {
-              ss_pid(argv); 
+              status = ss_pid(argv); 
             continue;
         }
         if (strcmp(argv[0], "ppid") == 0) {
-              ss_ppid(argv); 
+              status = ss_ppid(argv); 
             continue;
         }
 
-        
+        status = launch(argv, background);
 
-
-        /* Check the rest of builtins */
-        /*
-        int i;
-
-        for (i = 0; i < num_builtins(); i++) {
-            if (strcmp( argv[0], builtin_str[i] ) == 0) {
-                status = (*builtin_func[i])(argv);
-            }
-        }*/
-
-        launch(argv, background);
-
-//        status = execute(argv);
 
         free(line);
         free(argv);
@@ -276,27 +227,25 @@ launch(char **argv, int background)
 
     if (pid == 0) { // Child process
         printf("pid: %d\n", wpid);
+
         if (execvp(argv[0], argv) < 0) {
             perror(argv[0]);
             exit(EXIT_FAILURE);
         }
+
     } else if (pid > 0) { // Parent process
         if (background) {
             //waitpid(pid, NULL, 0);
             setpgid(0, 0);
         } else {
-        do {
-            printf("pid: %d\n", wpid);
-            wpid = waitpid(pid, &status, WUNTRACED);
-        } while(!WIFEXITED(status) && !WIFSIGNALED(status));
+            do {
+                printf("pid: %d\n", wpid);
+                wpid = waitpid(pid, &status, WUNTRACED);
+            } while(!WIFEXITED(status) && !WIFSIGNALED(status));
         }
     } else {
         perror("Fork failed: pid < 0\n");
     }
-/*
-    if (background) {
-        waitpid(pid, &status, 0);
-    }*/
 
     return 1;
 }
