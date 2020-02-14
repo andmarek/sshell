@@ -149,7 +149,7 @@ event_loop(char *prompt)
     //char cwd[1024];
     //getcwd(cwd, sizeof(cwd));
 
-    if (prompt == NULL) { 
+    if (prompt == NULL) {
         prompt = "308sh";
     }
 
@@ -190,16 +190,16 @@ event_loop(char *prompt)
         }
 
         if (strcmp(argv[0], "pwd") == 0) {
-             status = ss_pwd(argv); 
+             status = ss_pwd(argv);
             continue;
         }
 
         if (strcmp(argv[0], "pid") == 0) {
-              status = ss_pid(argv); 
+              status = ss_pid(argv);
             continue;
         }
         if (strcmp(argv[0], "ppid") == 0) {
-              status = ss_ppid(argv); 
+              status = ss_ppid(argv);
             continue;
         }
 
@@ -240,7 +240,9 @@ launch(char **argv, int background)
         } else {
             do {
                 printf("pid: %d\n", wpid);
-                wpid = waitpid(pid, &status, WUNTRACED);
+                //wpid = waitpid(pid, &status, WUNTRACED);
+                wpid = waitpid(pid, &status, WNOHANG);
+                printf("status: %d\n", status);
             } while(!WIFEXITED(status) && !WIFSIGNALED(status));
         }
     } else {
