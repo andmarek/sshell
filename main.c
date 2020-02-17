@@ -227,6 +227,9 @@ launch(char **argv, int background)
 
     if (pid == 0) { // Child process
         printf("pid: %d\n", wpid);
+        if (background) {
+            setpgid(0, 0);
+        }
 
         if (execvp(argv[0], argv) < 0) {
             perror(argv[0]);
@@ -234,17 +237,12 @@ launch(char **argv, int background)
         }
 
     } else if (pid > 0) { // Parent process
-        if (background) {
-            //waitpid(pid, NULL, 0);
-            setpgid(0, 0);
-        } else {
             do {
                 printf("pid: %d\n", wpid);
                 //wpid = waitpid(pid, &status, WUNTRACED);
                 wpid = waitpid(pid, &status, WNOHANG);
                 printf("status: %d\n", status);
             } while(!WIFEXITED(status) && !WIFSIGNALED(status));
-        }
     } else {
         perror("Fork failed: pid < 0\n");
     }
