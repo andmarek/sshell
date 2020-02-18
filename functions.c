@@ -18,7 +18,10 @@ ss_cd(char *path)
 {
     char *home_dir = getenv("HOME");
 
-
+    /*
+     * Kind of a dirty hack, we just run the program again,
+     * but with the home directory as the path.
+     */
     if (path == NULL) {
         ss_cd(home_dir);
     }
@@ -27,6 +30,7 @@ ss_cd(char *path)
       perror(path);
 
     }
+    return 1;
 }
 
 int

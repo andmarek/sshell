@@ -106,6 +106,7 @@ split_line(char *line)
 
     tokens = malloc(sizeof (char*) * BUFSIZE);
     token = strtok(line, sep);
+
     while (token != NULL) {
         tokens[token_count] = token;
         token = strtok(NULL, sep);
@@ -164,6 +165,13 @@ event_loop(char *prompt)
         printf(ANSI_COLOR_RESET);
 
         line = read_line();
+
+        if (line[0] == '\n') {
+            printf("dogs");
+            printf("\n");
+            continue;
+        }
+
         argv = split_line(line);
 
         background = (parse_ampersand(argv));
@@ -173,7 +181,7 @@ event_loop(char *prompt)
         }
 
         /* Some builtins, this feels like Go */
-        if (!argv) {
+        if (argv[0] == NULL) {
             continue;
         }
 
@@ -228,6 +236,8 @@ launch(char **argv, int background)
     if (pid == 0) { // Child process
         printf("pid: %d\n", wpid);
         if (background) {
+            printf("Bg proc\n");
+            pid_t fg_proc = fork(); /* Let's fork again */
             setpgid(0, 0);
         }
 
